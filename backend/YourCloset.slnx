@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="YourCloset.API/YourCloset.API.csproj" />
+  <Project Path="YourCloset.Application/YourCloset.Application.csproj" />
+  <Project Path="YourCloset.Domain/YourCloset.Domain.csproj" />
+  <Project Path="YourCloset.Infrastructure/YourCloset.Infrastructure.csproj" />
+</Solution>
