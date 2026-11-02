@@ -31,4 +31,21 @@ public class PrendaRepository : IPrendaRepository {
         await _context.SaveChangesAsync();
         return prenda;
     }
+
+    // Nuevo: Método de Actualización
+    public async Task<Prenda> UpdateAsync(Prenda prenda) {
+        _context.Prendas.Update(prenda);
+        await _context.SaveChangesAsync();
+        return prenda;
+    }
+
+    // Nuevo: Método de Eliminación
+    public async Task<bool> DeleteAsync(int id) {
+        var prenda = await _context.Prendas.FindAsync(id);
+        if (prenda == null) return false;
+
+        _context.Prendas.Remove(prenda);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }

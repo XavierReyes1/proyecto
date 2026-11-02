@@ -25,4 +25,18 @@ public class ClienteRepository : IClienteRepository {
         await _context.SaveChangesAsync();
         return cliente;
     }
+    public async Task<Cliente> UpdateAsync(Cliente cliente) {
+        _context.Clientes.Update(cliente);
+        await _context.SaveChangesAsync();
+        return cliente;
+    }
+
+    public async Task<bool> DeleteAsync(int id) {
+        var cliente = await _context.Clientes.FindAsync(id);
+        if (cliente == null) return false;
+
+        _context.Clientes.Remove(cliente);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }
