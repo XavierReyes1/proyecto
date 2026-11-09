@@ -1,33 +1,43 @@
+// src/features/prendas/components/PrendaCard.tsx
 import type { Prenda } from '../types/prenda.types'
 
-export function PrendaCard({ id, nombre, categoria, precio, stock }: Prenda) {
+// 1. Extendemos el contrato con la función de eliminación
+interface PrendaCardProps extends Prenda {
+    onEliminar: (id: number) => void;
+}
+
+export function PrendaCard({ id, nombre, categoria, precio, stock, onEliminar }: PrendaCardProps) {
     return (
-        <article className="bg-slate-800 border border-slate-700 rounded-xl p-5 flex flex-col justify-between hover:border-indigo-500 transition-colors shadow-sm">
+        <article className="bg-slate-800 border border-slate-700 rounded-xl p-5 flex flex-col justify-between hover:border-indigo-500 transition-colors shadow-sm relative">
             <div>
                 <div className="flex items-center justify-between mb-3">
                     <span className="bg-indigo-500/10 text-indigo-400 text-xs font-semibold px-2.5 py-1 rounded-md border border-indigo-500/20">
-                        ID Catálogo #{id}
+                        ID #{id}
                     </span>
                     <span className="text-xs text-slate-400 font-medium">{categoria}</span>
                 </div>
                 
-                <h3 className="text-lg font-bold text-white mb-2">
-                    {nombre}
-                </h3>
-                <p className="text-emerald-400 font-bold mb-1">
-                    ${precio.toFixed(2)}
-                </p>
-                <p className="text-sm text-slate-400 mb-5">
-                    Stock disponible: {stock}
-                </p>
+                <h3 className="text-lg font-bold text-white mb-2">{nombre}</h3>
+                <p className="text-emerald-400 font-bold mb-1">${precio.toFixed(2)}</p>
+                <p className="text-sm text-slate-400 mb-5">Stock disponible: {stock}</p>
             </div>
 
-            <button 
-                disabled 
-                className="w-full bg-slate-900/80 text-slate-400 text-sm font-medium py-2.5 px-4 rounded-lg cursor-not-allowed border border-slate-700"
-            >
-                🔒 Comprar (Requiere Sesión)
-            </button>
+            <div className="flex gap-2 mt-auto">
+                <button 
+                    disabled 
+                    className="flex-1 bg-slate-900/80 text-slate-400 text-sm font-medium py-2.5 px-4 rounded-lg cursor-not-allowed border border-slate-700"
+                >
+                    🔒 Comprar
+                </button>
+                
+                {/* 2. Botón de eliminar */}
+                <button 
+                    onClick={() => onEliminar(id)}
+                    className="bg-red-500/10 hover:bg-red-500/20 text-red-400 text-sm font-medium py-2.5 px-4 rounded-lg border border-red-500/20 transition-colors"
+                >
+                    🗑️
+                </button>
+            </div>
         </article>
     );
 }

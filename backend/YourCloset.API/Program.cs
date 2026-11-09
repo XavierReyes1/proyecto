@@ -1,6 +1,7 @@
 using DotNetEnv;
 using YourCloset.Infrastructure;
-using Scalar.AspNetCore; // 1. Importamos Scalar
+using YourCloset.Application; // <--- ¡Asegúrate de tener este using!
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,22 +9,38 @@ Env.Load();
 
 var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__PostgresConnection")
                        ?? throw new InvalidOperationException("Falta la cadena de conexión.");
-builder.Services.AddApplication();
-builder.Services.AddInfrastructure(connectionString);
-builder.Services.AddControllers();
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+var corsAllowedOrigins = Environment.GetEnvironmentVariable("CORS_ALLOWED_ORIGINS") 
+                         ?? throw new InvalidOperationException("Falta la variable CORS_ALLOWED_ORIGINS en el archivo .env.");
+
+builder.Services.AddInfrastructure(connectionString);
+builder.Services.AddApplication(); // <--- ¡AQUÍ ESTÁ LA SOLUCIÓN!
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PoliticaCorsYourCloset", policy =>
+    {
+        var origenes = corsAllowedOrigins.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        policy.WithOrigins(origenes)
+              .SetIsOriginAllowedToAllowWildcardSubdomains() 
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+app.UseCors("PoliticaCorsYourCloset");
+
 app.MapControllers();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();              // 2. Genera el JSON del contrato
-    app.MapScalarApiReference();   // 3. Levanta la UI de Scalar
+    app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
